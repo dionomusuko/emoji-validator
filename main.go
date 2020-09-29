@@ -6,10 +6,20 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type emojiJson struct {
 	Codes string `json:"codes"`
+}
+
+func RunetoHex(str string) []string {
+	runes := []rune(str)
+	hexParts := []string{}
+	for _, rune := range runes {
+		hexParts = append(hexParts, fmt.Sprintf("%X", rune))
+	}
+	return hexParts
 }
 
 func main() {
@@ -31,5 +41,19 @@ func main() {
 	if err := json.Unmarshal(body, &emojiJsons); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(emojiJsons)
+	array := RunetoHex("jgasrkfakf👨‍👨‍👧‍👧")
+L:
+	for _, ary := range array {
+		if len(ary) < 4 {
+			continue
+		}
+		fmt.Println(ary)
+		for _, emoji := range emojiJsons {
+			code := emoji.Codes
+			if strings.Index(ary, code) == 0 {
+				fmt.Println("emoji exists")
+				break L
+			}
+		}
+	}
 }
